@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Agrisiti Dashboard</title>
+
+<style>
+    body {
+        margin: 0;
+        font-family: 'Segoe UI', sans-serif;
+        background: #f4f9f6;
+        color: #1a1a1a;
+    }
+
+    /* HEADER */
+    .header {
+        background: linear-gradient(135deg, #0f7b3f, #28a745);
+        color: white;
+        padding: 25px 40px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .logo {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .logo img {
+        height: 40px;
+    }
+
+    .logo h1 {
+        margin: 0;
+        font-size: 22px;
+        font-weight: 600;
+    }
+
+    /* GRID */
+    .dashboard {
+        padding: 40px;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+        gap: 25px;
+    }
+
+    /* CARD */
+    .card {
+        background: white;
+        border-radius: 16px;
+        padding: 25px;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+        transition: 0.3s;
+    }
+
+    .card:hover {
+        transform: translateY(-5px);
+    }
+
+    .card h3 {
+        margin: 0;
+        font-size: 16px;
+        color: #666;
+    }
+
+    .card .value {
+        font-size: 34px;
+        font-weight: bold;
+        margin-top: 10px;
+        color: #0f7b3f;
+    }
+
+    .card .sub {
+        margin-top: 10px;
+        font-size: 14px;
+        color: #888;
+    }
+
+    /* BIG CARD */
+    .big-card {
+        grid-column: span 2;
+    }
+
+    /* PROGRESS BAR */
+    .progress {
+        margin-top: 10px;
+        height: 8px;
+        background: #eee;
+        border-radius: 10px;
+        overflow: hidden;
+    }
+
+    .progress div {
+        height: 100%;
+    }
+
+    .female { background: #28a745; width: 70%; }
+    .pwd { background: #ffc107; width: 20%; }
+    .refugee { background: #17a2b8; width: 10%; }
+
+</style>
+</head>
+
+<body>
+
+<!-- HEADER -->
+<div class="header">
+    <div class="logo">
+        <!-- Replace with your real logo -->
+        <img src="https://agrisiti.com/logo-without.svg" alt="Agrisiti Logo">
+        <h1>Agrisiti E-Learning Dashboard</h1>
+    </div>
+</div>
+
+<!-- DASHBOARD -->
+<div class="dashboard">
+
+    <!-- YCFI -->
+    <div class="card">
+        <h3>Students Trained (YCFI 2023–2025)</h3>
+        <div class="value" data-target="15000">0</div>
+    </div>
+
+    <!-- TAGDEV -->
+    <div class="card big-card">
+        <h3>TAGDEV 2025/2026 – Batch 1</h3>
+        <div class="value" data-target="3500">0</div>
+        <div class="sub">Distribution</div>
+
+        <div class="progress"><div class="female"></div></div>
+        <div class="sub">70% Female</div>
+
+        <div class="progress"><div class="pwd"></div></div>
+        <div class="sub">20% Persons with Disabilities</div>
+
+        <div class="progress"><div class="refugee"></div></div>
+        <div class="sub">10% Refugees</div>
+    </div>
+
+    <!-- AQUARICE -->
+    <div class="card">
+        <h3>AquaRice 360 Users</h3>
+        <div class="value" data-target="1700">0</div>
+    </div>
+
+    <!-- PRODUCE -->
+    <div class="card">
+        <h3>Produce Distributed</h3>
+        <div class="value" data-target="20000">0</div>
+        <div class="sub">tons</div>
+    </div>
+
+</div>
+
+<script>
+    // Animated counter
+    const counters = document.querySelectorAll('.value');
+
+    counters.forEach(counter => {
+        const update = () => {
+            const target = +counter.getAttribute('data-target');
+            const current = +counter.innerText;
+
+            const increment = target / 100;
+
+            if (current < target) {
+                counter.innerText = Math.ceil(current + increment);
+                setTimeout(update, 20);
+            } else {
+                counter.innerText = target.toLocaleString();
+            }
+        };
+        update();
+    });
+</script>
+
+</body>
+</html>
