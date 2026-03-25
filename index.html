@@ -4,176 +4,423 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Agrisiti Dashboard</title>
-
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <style>
+    * { box-sizing: border-box; }
     body {
         margin: 0;
         font-family: 'Segoe UI', sans-serif;
-        background: #f4f9f6;
+        background: linear-gradient(180deg, #f4f9f6 0%, #eef7f0 100%);
         color: #1a1a1a;
     }
 
-    /* HEADER */
     .header {
         background: linear-gradient(135deg, #0f7b3f, #28a745);
         color: white;
-        padding: 25px 40px;
+        padding: 24px 40px;
         display: flex;
         align-items: center;
         justify-content: space-between;
+        box-shadow: 0 8px 24px rgba(15, 123, 63, 0.18);
     }
 
     .logo {
         display: flex;
         align-items: center;
-        gap: 10px;
+        gap: 12px;
     }
 
     .logo img {
-        height: 40px;
+        height: 44px;
+        width: auto;
     }
 
     .logo h1 {
         margin: 0;
-        font-size: 22px;
+        font-size: 24px;
+        font-weight: 700;
+        letter-spacing: 0.2px;
+    }
+
+    .header-badge {
+        background: rgba(255,255,255,0.14);
+        border: 1px solid rgba(255,255,255,0.2);
+        padding: 10px 16px;
+        border-radius: 999px;
+        font-size: 14px;
         font-weight: 600;
     }
 
-    /* GRID */
     .dashboard {
-        padding: 40px;
+        padding: 32px 40px 48px;
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-        gap: 25px;
+        grid-template-columns: repeat(12, 1fr);
+        gap: 24px;
     }
 
-    /* CARD */
     .card {
         background: white;
-        border-radius: 16px;
-        padding: 25px;
-        box-shadow: 0 10px 25px rgba(0,0,0,0.05);
-        transition: 0.3s;
+        border-radius: 20px;
+        padding: 24px;
+        box-shadow: 0 12px 30px rgba(0,0,0,0.06);
+        transition: transform 0.25s ease, box-shadow 0.25s ease;
+        border: 1px solid rgba(18, 62, 31, 0.05);
     }
 
     .card:hover {
-        transform: translateY(-5px);
+        transform: translateY(-4px);
+        box-shadow: 0 16px 36px rgba(0,0,0,0.08);
     }
+
+    .span-3 { grid-column: span 3; }
+    .span-4 { grid-column: span 4; }
+    .span-5 { grid-column: span 5; }
+    .span-6 { grid-column: span 6; }
+    .span-7 { grid-column: span 7; }
+    .span-8 { grid-column: span 8; }
+    .span-12 { grid-column: span 12; }
 
     .card h3 {
         margin: 0;
         font-size: 16px;
-        color: #666;
+        color: #5e6b62;
+        font-weight: 600;
     }
 
-    .card .value {
-        font-size: 34px;
-        font-weight: bold;
+    .value {
+        font-size: 36px;
+        font-weight: 800;
         margin-top: 10px;
         color: #0f7b3f;
+        line-height: 1.05;
     }
 
-    .card .sub {
-        margin-top: 10px;
+    .sub {
+        margin-top: 8px;
         font-size: 14px;
-        color: #888;
+        color: #7b877f;
     }
 
-    /* BIG CARD */
-    .big-card {
-        grid-column: span 2;
+    .progress-group { margin-top: 16px; }
+    .progress-label {
+        display: flex;
+        justify-content: space-between;
+        font-size: 14px;
+        color: #425047;
+        margin-bottom: 6px;
+        font-weight: 600;
     }
 
-    /* PROGRESS BAR */
     .progress {
-        margin-top: 10px;
-        height: 8px;
-        background: #eee;
-        border-radius: 10px;
+        height: 10px;
+        background: #edf1ee;
+        border-radius: 999px;
         overflow: hidden;
+        margin-bottom: 14px;
     }
 
     .progress div {
         height: 100%;
+        border-radius: 999px;
     }
 
-    .female { background: #28a745; width: 70%; }
-    .pwd { background: #ffc107; width: 20%; }
-    .refugee { background: #17a2b8; width: 10%; }
+    .female { background: linear-gradient(90deg, #28a745, #42c767); width: 70%; }
+    .pwd { background: linear-gradient(90deg, #f2b705, #ffd452); width: 20%; }
+    .refugee { background: linear-gradient(90deg, #17a2b8, #42c9de); width: 10%; }
 
+    .chart-wrap {
+        position: relative;
+        height: 300px;
+        margin-top: 12px;
+    }
+
+    .chart-wrap.small {
+        height: 270px;
+    }
+
+    .legend-note {
+        margin-top: 10px;
+        font-size: 13px;
+        color: #7b877f;
+    }
+
+    .stats-inline {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 12px;
+        margin-top: 18px;
+    }
+
+    .mini-stat {
+        background: #f7faf8;
+        border-radius: 14px;
+        padding: 14px;
+        border: 1px solid #edf2ee;
+    }
+
+    .mini-stat .mini-value {
+        font-size: 18px;
+        font-weight: 800;
+        color: #0f7b3f;
+    }
+
+    .mini-stat .mini-label {
+        margin-top: 4px;
+        font-size: 13px;
+        color: #6c786f;
+    }
+
+    @media (max-width: 1100px) {
+        .dashboard {
+            grid-template-columns: repeat(6, 1fr);
+        }
+        .span-3, .span-4, .span-5, .span-6, .span-7, .span-8 { grid-column: span 6; }
+    }
+
+    @media (max-width: 700px) {
+        .header {
+            padding: 20px;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 12px;
+        }
+        .dashboard {
+            padding: 20px;
+            grid-template-columns: 1fr;
+        }
+        .span-3, .span-4, .span-5, .span-6, .span-7, .span-8, .span-12 { grid-column: span 1; }
+        .stats-inline { grid-template-columns: 1fr; }
+        .value { font-size: 30px; }
+        .chart-wrap, .chart-wrap.small { height: 260px; }
+    }
 </style>
 </head>
-
 <body>
 
-<!-- HEADER -->
 <div class="header">
     <div class="logo">
-        <!-- Replace with your real logo -->
-        <img src="https://agrisiti.com/logo-without.svg" alt="Agrisiti Logo">
+        <img src="logo-without.svg" alt="Agrisiti Logo">
         <h1>Agrisiti E-Learning Dashboard</h1>
     </div>
+    <div class="header-badge">Live Impact Overview</div>
 </div>
 
-<!-- DASHBOARD -->
 <div class="dashboard">
-
-    <!-- YCFI -->
-    <div class="card">
+    <div class="card span-3">
         <h3>Students Trained (YCFI 2023–2025)</h3>
         <div class="value" data-target="15000">0</div>
+        <div class="sub">Cumulative learners reached across the 2023–2025 cycle</div>
     </div>
 
-    <!-- TAGDEV -->
-    <div class="card big-card">
+    <div class="card span-5">
         <h3>TAGDEV 2025/2026 – Batch 1</h3>
         <div class="value" data-target="3500">0</div>
-        <div class="sub">Distribution</div>
+        <div class="sub">Target group composition</div>
 
-        <div class="progress"><div class="female"></div></div>
-        <div class="sub">70% Female</div>
+        <div class="progress-group">
+            <div class="progress-label"><span>Female</span><span>70%</span></div>
+            <div class="progress"><div class="female"></div></div>
 
-        <div class="progress"><div class="pwd"></div></div>
-        <div class="sub">20% Persons with Disabilities</div>
+            <div class="progress-label"><span>Persons with Disabilities</span><span>20%</span></div>
+            <div class="progress"><div class="pwd"></div></div>
 
-        <div class="progress"><div class="refugee"></div></div>
-        <div class="sub">10% Refugees</div>
+            <div class="progress-label"><span>Refugees</span><span>10%</span></div>
+            <div class="progress"><div class="refugee"></div></div>
+        </div>
     </div>
 
-    <!-- AQUARICE -->
-    <div class="card">
-        <h3>AquaRice 360 Users</h3>
-        <div class="value" data-target="1700">0</div>
-    </div>
-
-    <!-- PRODUCE -->
-    <div class="card">
+    <div class="card span-4">
         <h3>Produce Distributed</h3>
         <div class="value" data-target="20000">0</div>
-        <div class="sub">tons</div>
+        <div class="sub">Total tons distributed</div>
     </div>
 
+    <div class="card span-6">
+        <h3>AquaRice 360 Users by State</h3>
+        <div class="value" data-target="1700">0</div>
+        <div class="sub">Pie chart distribution of registered users</div>
+        <div class="chart-wrap small">
+            <canvas id="aquaRiceChart"></canvas>
+        </div>
+    </div>
+
+    <div class="card span-6">
+        <h3>Produce Distribution by Category</h3>
+        <div class="sub">Share of total produce distributed</div>
+        <div class="chart-wrap small">
+            <canvas id="produceChart"></canvas>
+        </div>
+        <div class="stats-inline">
+            <div class="mini-stat">
+                <div class="mini-value">49%</div>
+                <div class="mini-label">Fish</div>
+            </div>
+            <div class="mini-stat">
+                <div class="mini-value">31%</div>
+                <div class="mini-label">Poultry</div>
+            </div>
+            <div class="mini-stat">
+                <div class="mini-value">20%</div>
+                <div class="mini-label">Vegetables</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card span-12">
+        <h3>YCFI 2023–2025 Live Registration Trend</h3>
+        <div class="sub">Animated registration-style growth showing the journey to 15,000 trained students</div>
+        <div class="chart-wrap">
+            <canvas id="ycfiChart"></canvas>
+        </div>
+        <div class="legend-note">Year split used for the live graph: 2023 = 3,800, 2024 = 5,100, 2025 = 6,100 (total 15,000).</div>
+    </div>
 </div>
 
 <script>
-    // Animated counter
     const counters = document.querySelectorAll('.value');
 
     counters.forEach(counter => {
+        const target = +counter.getAttribute('data-target');
+        const duration = 1800;
+        const steps = 90;
+        const increment = target / steps;
+        const interval = duration / steps;
+        let current = 0;
+
         const update = () => {
-            const target = +counter.getAttribute('data-target');
-            const current = +counter.innerText;
-
-            const increment = target / 100;
-
+            current += increment;
             if (current < target) {
-                counter.innerText = Math.ceil(current + increment);
-                setTimeout(update, 20);
+                counter.innerText = Math.round(current).toLocaleString();
+                setTimeout(update, interval);
             } else {
                 counter.innerText = target.toLocaleString();
             }
         };
         update();
+    });
+
+    const commonPieOptions = {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: {
+                position: 'bottom',
+                labels: {
+                    boxWidth: 14,
+                    usePointStyle: true,
+                    pointStyle: 'circle',
+                    padding: 18,
+                    color: '#425047',
+                    font: { size: 12, weight: '600' }
+                }
+            },
+            tooltip: {
+                callbacks: {
+                    label: function(context) {
+                        return `${context.label}: ${context.parsed}%`;
+                    }
+                }
+            }
+        }
+    };
+
+    new Chart(document.getElementById('aquaRiceChart'), {
+        type: 'pie',
+        data: {
+            labels: ['Kano', 'Niger', 'Enugu', 'Ogun', 'Rivers', 'Bayelsa', 'Cross River'],
+            datasets: [{
+                data: [32, 24, 4, 18, 6, 6, 10],
+                backgroundColor: [
+                    '#0f7b3f',
+                    '#28a745',
+                    '#7ecb8f',
+                    '#f2b705',
+                    '#17a2b8',
+                    '#66c7d6',
+                    '#4e8f5b'
+                ],
+                borderColor: '#ffffff',
+                borderWidth: 3
+            }]
+        },
+        options: commonPieOptions
+    });
+
+    new Chart(document.getElementById('produceChart'), {
+        type: 'pie',
+        data: {
+            labels: ['Fish', 'Poultry', 'Vegetables'],
+            datasets: [{
+                data: [49, 31, 20],
+                backgroundColor: ['#0f7b3f', '#28a745', '#f2b705'],
+                borderColor: '#ffffff',
+                borderWidth: 3
+            }]
+        },
+        options: commonPieOptions
+    });
+
+    const ycfiCtx = document.getElementById('ycfiChart');
+    new Chart(ycfiCtx, {
+        type: 'line',
+        data: {
+            labels: ['2023', '2024', '2025'],
+            datasets: [{
+                label: 'Students trained',
+                data: [3800, 5100, 6100],
+                borderColor: '#0f7b3f',
+                backgroundColor: 'rgba(15, 123, 63, 0.12)',
+                fill: true,
+                tension: 0.35,
+                pointRadius: 5,
+                pointHoverRadius: 7,
+                pointBackgroundColor: '#28a745',
+                pointBorderColor: '#ffffff',
+                pointBorderWidth: 2,
+                borderWidth: 3
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            animation: {
+                duration: 2200,
+                easing: 'easeOutQuart'
+            },
+            plugins: {
+                legend: {
+                    display: true,
+                    position: 'top',
+                    labels: {
+                        color: '#425047',
+                        font: { weight: '600' }
+                    }
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            return `${context.dataset.label}: ${context.parsed.y.toLocaleString()}`;
+                        }
+                    }
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    grid: { color: 'rgba(0,0,0,0.06)' },
+                    ticks: {
+                        color: '#5e6b62',
+                        callback: function(value) {
+                            return value.toLocaleString();
+                        }
+                    }
+                },
+                x: {
+                    grid: { display: false },
+                    ticks: { color: '#5e6b62' }
+                }
+            }
+        }
     });
 </script>
 
